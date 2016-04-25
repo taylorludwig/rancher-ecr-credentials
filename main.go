@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/rancher/go-rancher/client"
@@ -18,22 +17,18 @@ import (
 
 // Rancher holds the configuration parameters
 type Rancher struct {
-	URL          string
-	AccessKey    string
-	SecretKey    string
-	AWSAccessKey string
-	AWSSecretKey string
-	AWSRegion    string
+	URL       string
+	AccessKey string
+	SecretKey string
+	AWSRegion string
 }
 
 func main() {
 	vargs := Rancher{
-		URL:          os.Getenv("CATTLE_URL"),
-		AccessKey:    os.Getenv("CATTLE_ACCESS_KEY"),
-		SecretKey:    os.Getenv("CATTLE_SECRET_KEY"),
-		AWSAccessKey: os.Getenv("AWS_ACCESS_KEY_ID"),
-		AWSSecretKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
-		AWSRegion:    os.Getenv("AWS_REGION"),
+		URL:       os.Getenv("CATTLE_URL"),
+		AccessKey: os.Getenv("CATTLE_ACCESS_KEY"),
+		SecretKey: os.Getenv("CATTLE_SECRET_KEY"),
+		AWSRegion: os.Getenv("AWS_REGION"),
 	}
 
 	err := updateEcr(vargs)
@@ -54,8 +49,7 @@ func main() {
 func updateEcr(vargs Rancher) error {
 	fmt.Printf("Updating ECR Credentials\n")
 	ecrClient := ecr.New(session.New(&aws.Config{
-		Region:      aws.String(vargs.AWSRegion),
-		Credentials: credentials.NewStaticCredentials(vargs.AWSAccessKey, vargs.AWSSecretKey, ""),
+		Region: aws.String(vargs.AWSRegion),
 	}))
 
 	resp, err := ecrClient.GetAuthorizationToken(&ecr.GetAuthorizationTokenInput{})
